@@ -51,8 +51,40 @@ Template.userCreation.events({
             t.users.set(u);
           });
     });
+  },
+  "click #apiCheckFormat": function(e, t){
+    // Reset the error
+    t.error.set(false);
+
+    try {
+      t.users.set(getUsersByApi($('#usersApiURL').val()));
+      t.ready.set(true);
+    } catch(err){
+      t.error.set(err);
+      t.ready.set(false);
+    }
+  },
+  "click #apiCreateUsers": function(e, t){
+    // Create the users one by one
+    t.users.get().forEach(function(user, idx){
+      Meteor.call("createAccount",
+          user.username,
+          user.password,
+          user.profile,
+          function(error){
+            if (error){
+              user.failed = true;
+            } else {
+              user.success = true;
+            }
+            var u = t.users.get();
+            u[idx] = user;
+            t.users.set(u);
+          });
+    });
   }
 });
+
 
 function formatCsv(csv, t){
   var rows = csv.split('\n');
@@ -99,5 +131,67 @@ function formatCsv(csv, t){
       }
     }
   })
+
+}
+
+function getUsersByApi(url){
+  var users = [];
+
+  $.ajaxSetup({async:false});
+  var response = $.get(url, function (data) {
+    return data;
+  });
+
+  $.ajaxSetup({async:true});
+
+  if (response.length == 0){
+    throw "There's nothing here.";
+  }
+
+  $.each(response.responseJSON, function(index, item) {
+
+    // skip unfinished orders
+    if(item.order_status == 'refunded' || item.order_status == 'cancelled' ) {
+      return true; // skip
+    }
+
+    // skip invalid data
+    if (item.attendee_meta == '') {
+      return true;
+    }
+
+    var username = item.attendee_meta['e-mail-address'].value.trim(),
+        email = item.attendee_meta['e-mail-address'].value.trim(),
+        password = item['security_code'].trim(),
+        name = item.attendee_meta['first-name'].value.trim() + ' ' + item.attendee_meta['last-name'].value.trim();
+
+    var newUser =  {
+      username: username,
+      password: password,
+      email: email,
+      profile: {
+        name: name,
+        mentor: false,
+        email: email
+      }
+    };
+
+    // add skills
+    if(item.attendee_meta['what-programming-languages-tools-are-you-familiar-with']) {
+      if(item.attendee_meta['what-programming-languages-tools-are-you-familiar-with'].value) {
+        newUser.profile.skills = Object.values(item.attendee_meta['what-programming-languages-tools-are-you-familiar-with'].value);
+      }
+    }
+    //add company & position
+    if(item.attendee_meta['job-title'] &&
+        item.attendee_meta['company-organization']) {
+        newUser.profile.company = item.attendee_meta['company-organization'].value + ' / ' + item.attendee_meta['job-title'].value;
+    }
+
+    users.push(newUser);
+
+  });
+
+  return users;
 
 }

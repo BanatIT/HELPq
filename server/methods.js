@@ -290,13 +290,18 @@ function createAccount(username, password, profile){
   // TODO: validate username, password
   check(username, String);
   check(password, String);
+  var newUser = {
+    username: username,
+    password: password,
+    profile: profile ? profile : {}
+  };
 
+  if(profile.email) {
+    newUser.email = profile.email;
+  }
+  
   if (authorized.admin(this.userId)){
-    return Accounts.createUser({
-      username: username,
-      password: password,
-      profile: profile ? profile : {}
-    });
+    return Accounts.createUser(newUser);
   }
   return false;
 }

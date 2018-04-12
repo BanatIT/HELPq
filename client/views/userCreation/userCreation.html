@@ -26,6 +26,31 @@
           </div>
         </div>
       </div>
+      <div class="ui segment">
+        <h3 class="ui dividing header">
+          Batch User Api Import
+        </h3>
+        <div class="ui form">
+          <div class="field">
+            <label>Api URL</label>
+            <input id="usersApiURL" name="apiUrl" value="http://demo.banatit.ro/wp-json/api/v1/bit-events/get/3700/dnf0HTB38XPk6wgDZbYwz2VnEjV61G4d/"/>
+          </div>
+          <div class="field">
+            <div id="apiCheckFormat" class="ui blue button">
+              Get Api
+            </div>
+            {{#if ready}}
+            <div id="apiCreateUsers" class="ui green button">
+              Create Users
+            </div>
+            {{else}}
+            <div id="apiCreateUsers" class="ui disabled green button">
+              Create Users
+            </div>
+            {{/if}}
+          </div>
+        </div>
+      </div>
     </div>
     <div class="column">
       <div class="ui segment">
@@ -58,7 +83,7 @@
                   Username:
                   <strong>
                     {{username}}
-                  </strong>
+                  </strong><br/>
                   Password:
                   <strong>
                     {{password}}
