@@ -149,7 +149,9 @@ function getUsersByApi(url){
   }
 
   $.each(response.responseJSON, function(index, item) {
-
+    // @TODO - implement ROLES
+    // @TODO - mark mentors
+    // @TODO - remove visitors
     // skip unfinished orders
     if(item.order_status == 'refunded' || item.order_status == 'cancelled' ) {
       return true; // skip
