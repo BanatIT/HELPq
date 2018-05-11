@@ -153,10 +153,13 @@ function getUsersByApi(url){
     // @TODO - mark mentors
     // @TODO - remove visitors
     // skip unfinished orders
-    if(item.order_status == 'refunded' || item.order_status == 'cancelled' ) {
+    if(item.order_status != 'processing' && item.order_status != 'completed' ) {
       return true; // skip
     }
 
+    if(item.ticket == 'Visitor Ticket') {
+        return true;
+    }
     // skip invalid data
     if (item.attendee_meta == '') {
       return true;
@@ -177,6 +180,10 @@ function getUsersByApi(url){
         email: email
       }
     };
+
+    if(item.ticket == 'Mentor') {
+      newUser.profile.mentor = true;
+    }
 
     // add skills
     if(item.attendee_meta['what-programming-languages-tools-are-you-familiar-with']) {
