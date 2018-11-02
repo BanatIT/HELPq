@@ -153,17 +153,17 @@ function getUsersByApi(url){
     // @TODO - mark mentors
     // @TODO - remove visitors
     // skip unfinished orders
-    if(item.order_status != 'processing' && item.order_status != 'completed' ) {
-      return true; // skip
-    }
-
-    if(item.ticket == 'Visitor Ticket') {
-        return true;
-    }
-    // skip invalid data
-    if (item.attendee_meta == '') {
-      return true;
-    }
+    // if(item.order_status != 'processing' && item.order_status != 'completed' ) {
+    //   return true; // skip
+    // }
+    //
+    // if(item.ticket == 'Visitor Ticket') {
+    //     return true;
+    // }
+    // // skip invalid data
+    // if (item.attendee_meta == '') {
+    //   return true;
+    // }
 
     var username = item.attendee_meta['e-mail-address'].value.trim(),
         email = item.attendee_meta['e-mail-address'].value.trim(),
